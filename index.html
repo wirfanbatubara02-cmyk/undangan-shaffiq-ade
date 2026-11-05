@@ -1151,27 +1151,33 @@ function ambilData(kunci, defaultValue) {
 function bukaUndangan() {
 
     const amplop = document.getElementById("amplop");
-
     const cover = document.getElementById("cover");
-
     const konten = document.getElementById("kontenUndangan");
+    const tombolMusik = document.getElementById("musicButton");
+
+    if (!amplop || !cover || !konten) {
+        alert("Elemen undangan tidak ditemukan. Periksa HTML.");
+        return;
+    }
 
     amplop.classList.add("open");
 
     setTimeout(function() {
 
         cover.style.display = "none";
-
         konten.style.display = "block";
 
-        document.getElementById("musicButton").style.display = "block";
+        if (tombolMusik) {
+            tombolMusik.style.display = "block";
+        }
 
         window.scrollTo(0, 0);
 
-        putarMusik();
+        if (typeof putarMusik === "function") {
+            putarMusik();
+        }
 
     }, 1100);
-
 }
 
 
