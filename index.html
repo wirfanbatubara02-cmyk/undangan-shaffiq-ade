@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<<html lang="id">
+<html lang="id">
 <head>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1522,7 +1522,70 @@ async function tampilkanUcapan() {
 
             tempat.innerHTML =
                 "<p class='description'>Belum ada ucapan.</p>";
+// ======================================
+// BUKU TAMU SUPABASE
+// ======================================
 
+async function kirimUcapan() {
+
+    const nama = document.getElementById("namaTamu").value.trim();
+    const pesan = document.getElementById("pesanTamu").value.trim();
+
+    if (nama === "" || pesan === "") {
+        alert("Nama dan ucapan harus diisi.");
+        return;
+    }
+
+    if (nama.length > 100 || pesan.length > 1000) {
+        alert("Nama maksimal 100 karakter dan ucapan maksimal 1000 karakter.");
+        return;
+    }
+
+    try {
+
+        const { error } = await supabaseClient
+            .from("ucapan_shaffiq_ade")
+            .insert([{ nama: nama, pesan: pesan }]);
+
+        if (error) throw error;
+
+        document.getElementById("namaTamu").value = "";
+        document.getElementById("pesanTamu").value = "";
+
+        await tampilkanUcapan();
+
+        alert("Terima kasih atas ucapan dan doanya!");
+
+    } catch (error) {
+
+        console.error(error);
+        alert("Ucapan gagal dikirim. Periksa koneksi internet.");
+
+    }
+}
+
+
+async function tampilkanUcapan() {
+
+    const tempat = document.getElementById("daftarUcapan");
+
+    if (!tempat) return;
+
+    tempat.innerHTML = "<p class='description'>Memuat ucapan...</p>";
+
+    try {
+
+        const { data, error } = await supabaseClient
+            .from("ucapan_shaffiq_ade")
+            .select("nama, pesan, created_at")
+            .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        tempat.innerHTML = "";
+
+        if (!data || data.length === 0) {
+            tempat.innerHTML = "<p class='description'>Belum ada ucapan.</p>";
             return;
         }
 
@@ -1537,10 +1600,7 @@ async function tampilkanUcapan() {
             const tanggal = document.createElement("small");
             tanggal.style.display = "block";
             tanggal.style.color = "#d5ad60";
-
-            tanggal.textContent = new Date(
-                item.created_at
-            ).toLocaleDateString("id-ID");
+            tanggal.textContent = new Date(item.created_at).toLocaleDateString("id-ID");
 
             const pesan = document.createElement("p");
             pesan.textContent = item.pesan;
@@ -1557,8 +1617,7 @@ async function tampilkanUcapan() {
 
         console.error(error);
 
-        tempat.innerHTML =
-            "<p class='description'>Gagal memuat ucapan. Periksa koneksi internet.</p>";
+        tempat.innerHTML = "<p class='description'>Gagal memuat ucapan. Periksa koneksi internet.</p>";
 
     }
 }
