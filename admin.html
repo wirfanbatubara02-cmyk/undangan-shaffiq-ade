@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Undangan - Shaffiq & Ade</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --maroon: #4b101e;
+    --maroon-dark: #2b0710;
+    --gold: #d5ad60;
+    --gold-light: #f1d99d;
+    --cream: #fff8eb;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #f4eee6;
+    font-family: 'Poppins', sans-serif;
+    color: #38252a;
+}
+
+header {
+    background: linear-gradient(135deg, var(--maroon-dark), var(--maroon));
+    color: var(--gold-light);
+    padding: 25px 15px;
+    text-align: center;
+    border-bottom: 4px solid var(--gold);
+}
+
+header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    margin: 0;
+}
+
+header p {
+    font-size: 11px;
+    letter-spacing: 3px;
+    margin: 5px 0 0;
+}
+
+.container {
+    max-width: 850px;
+    margin: auto;
+    padding: 15px;
+}
+
+.menu-admin {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+    margin-bottom: 20px;
+}
+
+.menu-admin button {
+    background: var(--maroon);
+    color: var(--gold-light);
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    padding: 13px 5px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.menu-admin button:active {
+    background: var(--gold);
+    color: var(--maroon-dark);
+}
+
+.page {
+    display: none;
+    background: var(--white);
+    padding: 20px;
+    border-radius: 12px;
+    border-top: 4px solid var(--gold);
+    box-shadow: 0 4px 15px rgba(0,0,0,.07);
+    margin-bottom: 25px;
+}
+
+.page h2 {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--maroon);
+    font-size: 27px;
+    margin-top: 0;
+    border-bottom: 1px solid #ead9b9;
+    padding-bottom: 10px;
+}
+
+.page h3 {
+    color: var(--maroon);
+    font-size: 16px;
+    margin-top: 22px;
+}
+
+label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 14px 0 6px;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d9c8aa;
+    border-radius: 7px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    background: #fffdf9;
+    color: #38252a;
+}
+
+textarea {
+    min-height: 85px;
+    resize: vertical;
+}
+
+button.save {
+    width: 100%;
+    background: var(--maroon);
+    color: var(--gold-light);
+    border: 1px solid var(--gold);
+    padding: 14px;
+    border-radius: 7px;
+    margin-top: 18px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button.danger {
+    background: #a32232;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button.small {
+    background: var(--gold);
+    color: var(--maroon-dark);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 3px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--maroon-dark), var(--maroon));
+    color: var(--gold-light);
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    border: 1px solid var(--gold);
+}
+
+.stat-card h3 {
+    color: var(--gold-light);
+    font-size: 35px;
+    margin: 0;
+}
+
+.preview {
+    display: block;
+    width: 100%;
+    max-width: 180px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 2px solid var(--gold);
+}
+
+.item-box {
+    background: #fffaf1;
+    border: 1px solid #e7d6b7;
+    padding: 12px;
+    border-radius: 7px;
+    margin-top: 10px;
+    overflow-wrap: anywhere;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #eadfcf;
+    margin: 22px 0;
+}
+
+.info {
+    font-size: 11px;
+    color: #806d61;
+    line-height: 1.6;
+}
+
+footer {
+    text-align: center;
+    color: #927c6b;
+    font-size: 11px;
+    padding: 20px;
+}
+
+@media(min-width:600px) {
+    .menu-admin {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Shaffiq & Ade</h1>
+    <p>WEDDING INVITATION ADMIN PANEL</p>
+</header>
+
+<div class="container">
+
+    <!-- MENU ADMIN -->
+    <div class="menu-admin">
+        <button onclick="showPage('mempelai')">💑 Data Mempelai</button>
+        <button onclick="showPage('acara')">📅 Informasi Acara</button>
+        <button onclick="showPage('foto')">📷 Foto & Galeri</button>
+        <button onclick="showPage('gift')">🎁 Wedding Gift</button>
+        <button onclick="showPage('menu')">📋 Menu Undangan</button>
+        <button onclick="showPage('tampilan')">🎨 Tampilan & Musik</button>
+        <button onclick="showPage('tamu')">👥 Daftar Tamu</button>
+    </div>
+
+    <!-- DATA MEMPELAI -->
+    <section id="mempelai" class="page">
+        <h2>Data Kedua Mempelai</h2>
+
+        <h3>Calon Mempelai Pria</h3>
+
+        <label>Nama Lengkap</label>
+        <input id="pria" value="Muhammad Myzul Shaffiq">
+
+        <label>Nama Panggilan</label>
+        <input id="panggilan_pria" value="Shaffiq">
+
+        <label>Nama Ayah</label>
+        <input id="ayah_pria" value="Alm. Azizul bin Hasan">
+
+        <label>Nama Ibu</label>
+        <input id="ibu_pria" value="Erikawati binti Nurdin Margolang">
+
+        <hr>
+
+        <h3>Calon Mempelai Wanita</h3>
+
+        <label>Nama Lengkap</label>
+        <input id="wanita" value="Ade Novera Sari">
+
+        <label>Nama Panggilan</label>
+        <input id="panggilan_wanita" value="Ade">
+
+        <label>Nama Ayah</label>
+        <input id="ayah_wanita" value="Saharuddin">
+
+        <label>Nama Ibu</label>
+        <input id="ibu_wanita" value="Paridah Wati">
+
+        <button class="save" onclick="simpanData()">💾 SIMPAN DATA MEMPELAI</button>
+    </section>
+
+    <!-- INFORMASI ACARA -->
+    <section id="acara" class="page">
+        <h2>Informasi Acara</h2>
+
+        <h3>Akad Nikah</h3>
+
+        <label>Tanggal Akad</label>
+        <input id="tanggal_akad" value="Sabtu, 7 November 2026">
+
+        <label>Jam Akad</label>
+        <input id="jam_akad" value="09.00 WIB">
+
+        <label>Lokasi Akad</label>
+        <textarea id="lokasi_akad">Kediaman Mempelai Wanita</textarea>
+
+        <hr>
+
+        <h3>Resepsi Pernikahan</h3>
+
+        <label>Tanggal Resepsi</label>
+        <input id="tanggal_resepsi" value="Senin, 16 November 2026">
+
+        <label>Jam Resepsi</label>
+        <input id="jam_resepsi" value="10.00 WIB – selesai">
+
+        <label>Alamat Resepsi</label>
+        <textarea id="lokasi_resepsi">Jl. Sepakat, Kampung Baru, Kel. TB III, Kec. TB Utara, Kota Tanjungbalai</textarea>
+
+        <label>Link Google Maps</label>
+        <input id="maps" type="url" placeholder="Masukkan link Google Maps">
+
+        <button class="save" onclick="simpanData()">💾 SIMPAN INFORMASI ACARA</button>
+    </section>
+
+    <!-- FOTO DAN GALERI -->
+    <section id="foto" class="page">
+        <h2>Foto & Galeri</h2>
+
+        <label>Foto Mempelai Pria</label>
+        <input type="file" id="foto_pria" accept="image/*">
+        <img id="preview_pria" class="preview" alt="Preview foto pria">
+
+        <label>Foto Mempelai Wanita</label>
+        <input type="file" id="foto_wanita" accept="image/*">
+        <img id="preview_wanita" class="preview" alt="Preview foto wanita">
+
+        <label>Foto Bersama</label>
+        <input type="file" id="foto_bersama" accept="image/*">
+        <img id="preview_bersama" class="preview" alt="Preview foto bersama">
+
+        <p class="info">
+            Gunakan foto JPG, PNG, atau WebP. Sebaiknya ukuran foto tidak lebih dari 2 MB agar undangan lebih ringan.
+        </p>
+
+        <button class="save" onclick="simpanFoto()">💾 SIMPAN FOTO</button>
+    </section>
+
+    <!-- WEDDING GIFT -->
+    <section id="gift" class="page">
+        <h2>Wedding Gift</h2>
+
+        <label>Nama Bank / E-Wallet</label>
+        <input id="nama_bank" placeholder="Contoh: BCA / BRI / DANA">
+
+        <label>Nomor Rekening / E-Wallet</label>
+        <input id="nomor_rekening" placeholder="Masukkan nomor rekening">
+
+        <label>Atas Nama</label>
+        <input id="atas_nama" placeholder="Nama pemilik rekening">
+
+        <label>Alamat Pengiriman Hadiah</label>
+        <textarea id="alamat_gift" placeholder="Masukkan alamat pengiriman hadiah"></textarea>
+
+        <button class="save" onclick="simpanGift()">💾 SIMPAN WEDDING GIFT</button>
+    </section>
+
+    <!-- MENU UNDANGAN -->
+    <section id="menu" class="page">
+        <h2>Pengaturan Menu Undangan</h2>
+
+        <label>Nama Menu Baru</label>
+        <input id="inputMenu" placeholder="Contoh: Kisah Kami">
+
+        <button class="save" onclick="tambahMenu()">+ TAMBAH MENU</button>
+
+        <hr>
+
+        <h3>Daftar Menu</h3>
+        <div id="daftarMenu">
+            Belum ada menu.
+        </div>
+    </section>
+
+    <!-- TAMPILAN DAN MUSIK -->
+    <section id="tampilan" class="page">
+        <h2>Tampilan & Musik</h2>
+
+        <label>Tema Undangan</label>
+        <select id="tema">
+            <option value="Luxury Royal">Luxury Royal Maroon & Gold</option>
+            <option value="Classic">Classic Elegant</option>
+            <option value="Minimalis">Minimalis Modern</option>
+        </select>
+
+        <label>Upload Musik</label>
+        <input type="file" id="fileMusik" accept="audio/*">
+
+        <label>Nama / Sumber Musik</label>
+        <input id="musik" value="Sezairi - It's You">
+
+        <p class="info">
+            Musik akan diputar setelah tamu menekan tombol buka undangan. Format MP3 disarankan.
+        </p>
+
+        <label>Teks Arab Pembuka</label>
+        <textarea id="arab">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</textarea>
+
+        <button class="save" onclick="simpanTampilan()">💾 SIMPAN TAMPILAN</button>
+    </section>
+
+    <!-- DAFTAR TAMU -->
+    <section id="tamu" class="page">
+        <h2>Manajemen Daftar Tamu</h2>
+
+        <div class="stat-card">
+            <h3 id="jumlahTamu">0</h3>
+            <p>Total Tamu Terdaftar</p>
+        </div>
+
+        <hr>
+
+        <h3>Link Undangan Publik</h3>
+
+        <label>Link Undangan Tiiny.host</label>
+        <input type="url" id="linkUndangan" placeholder="https://alamat-undangan">
+
+        <button class="save" onclick="simpanLinkPublik()">💾 SIMPAN LINK UNDANGAN</button>
+
+        <hr>
+
+        <h3>Tambah Nama Tamu</h3>
+
+        <label>Nama Tamu</label>
+        <input type="text" id="inputNamaTamu" placeholder="Contoh: Bapak Ahmad & Keluarga">
+
+        <button class="save" onclick="tambahTamu()">+ TAMBAH TAMU</button>
+
+        <hr>
+
+        <h3>Daftar Nama Tamu</h3>
+        <div id="daftarTamu">
+            Belum ada tamu.
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    SHAFFIQ & ADE<br>
+    WEDDING INVITATION ADMIN PANEL
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
